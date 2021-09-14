@@ -27,6 +27,7 @@
 		DAE5E70626EB6AB900E1E4F8 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		DAE5E70E26EF780200E1E4F8 /* highcard.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = highcard.hpp; sourceTree = "<group>"; };
 		DAE5E71026EF78A300E1E4F8 /* tests.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = tests.hpp; sourceTree = "<group>"; };
+		DAE5E71126F08B5900E1E4F8 /* cxxopts.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = cxxopts.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +60,7 @@
 		DAE5E70526EB6AB900E1E4F8 /* hilo */ = {
 			isa = PBXGroup;
 			children = (
+				DAE5E71126F08B5900E1E4F8 /* cxxopts.hpp */,
 				DAE5E70626EB6AB900E1E4F8 /* main.cpp */,
 				DAE5E70E26EF780200E1E4F8 /* highcard.hpp */,
 				DAE5E71026EF78A300E1E4F8 /* tests.hpp */,
