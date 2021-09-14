@@ -63,13 +63,13 @@ namespace HighCard{
                 // Number of cards with same face value but different suits as the wild card
                 int sameValueAsWildCard = wildCards * 3;
 
-                ties = ( uniqueCards - 1 ) * (copiesOfCards - 1) + // normal cards
+                ties = ( uniqueCards - 1 ) * copiesOfCards * (copiesOfCards - 1) + // normal cards
                     sameValueAsWildCard * ( sameValueAsWildCard - 1 ) + // same value as wildcard
                     wildCards * ( wildCards - 1 ); // wildcards
 
             }
             else{
-                ties = uniqueCards * (copiesOfCards - 1);
+                ties = uniqueCards * copiesOfCards * (copiesOfCards - 1);
             }
             
             // Wins/losses are half of what is left after ties are calculated
@@ -77,6 +77,7 @@ namespace HighCard{
             
             // Return the distribution
             if ( ties > 0 ){
+//                std::cout << winOrLoseCards << ": " << ties << " (" << 2 * winOrLoseCards + ties << ")\n";
                 return Distribution{ winOrLoseCards, winOrLoseCards, ( float )ties };
             }
             else {

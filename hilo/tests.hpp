@@ -26,6 +26,11 @@ namespace UnitTest{
             bool breakTies,
             bool useWildCards )
     {
+        
+        if ( breakTies ){
+            return Distribution{ 1, 1 };
+        }
+        
         // Unique cards
         int uniqueCards = cardsPerSuit;
 
@@ -52,27 +57,24 @@ namespace UnitTest{
         
         }
         
-        int ties = 0;
-        int winOrLose = 0;
         
-        // Calculate the ties and wins/losses by going through all the permutations
+        // Calculate the ties
+        int ties = 0;
         for ( auto i : cards ){
-            int iCount = cards[ i ];
-            for ( auto j : cards ){
-                int jCount = cards[ j ];
-                if ( i == j ){
-                    ties += iCount * ( jCount - 1 );
-                }
-                else{
-                    winOrLose += iCount * jCount;
-                }
+            ties += i * ( i - 1 );
+        }
+        
+        // Calculate the wins
+        int wins = 0;
+        for ( int i = 0; i < cards.size(); ++i ){
+            for ( int j = i + 1; j < cards.size(); ++j ){
+                    wins += cards[ i ] * cards[ j ];
             }
         }
         
-        // Return the distribution
-        double wins = ( double )winOrLose / 2.0;
         if ( ties > 0 ){
-            return Distribution{ wins, wins, ( double )ties };
+//            std::cout << wins << ": " << ties << " (" << 2 * wins + ties << ")\n";
+            return Distribution{ ( double )wins, ( double )wins, ( double )ties };
         }
         else {
             return Distribution{ 1, 1 };
@@ -104,7 +106,7 @@ namespace UnitTest{
     {
         
         auto test = GetDistribution( decks, cardsPerSuit, ignoreSuits, breakTies, useWildCards );
-        auto control = GetDistribution( decks, cardsPerSuit, ignoreSuits, breakTies, useWildCards );
+        auto control = GetDistributionControl( decks, cardsPerSuit, ignoreSuits, breakTies, useWildCards );
         
         if ( test.probabilities() == control.probabilities() ){
             printVector( message + " passed", control.probabilities() );
