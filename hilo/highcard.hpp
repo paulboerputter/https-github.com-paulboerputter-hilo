@@ -18,7 +18,7 @@ namespace HighCard{
     // The random distribution that is used to generate outcomes
     typedef std::discrete_distribution< Outcome > Distribution;
     
-    // Claculates the distribution according to the given arguments
+    // Calculates the distribution according to the given arguments
     Distribution GetDistribution(
             int decks,
             int cardsPerSuit,
@@ -27,34 +27,50 @@ namespace HighCard{
             bool useWildCards )
     {
         
-#ifdef DEBUG
-        std::cout << decks << " decks " << cardsPerSuit << " cards " << (ignoreSuits ? "no suits " : "") << ( breakTies ? "break ties " : "" ) << ( useWildCards ? "wild cards\n" : "\n" );
-
-#endif
-        
         if ( breakTies ) {
             // if there are no ties allowed the game is always coin flip
             return Distribution{ 1, 1 };
         } else {
-            // Unique cards depend on wheter suits are ranked or not
-            int uniqueCards = ignoreSuits? cardsPerSuit : cardsPerSuit * 4;
             
+            // Unique cards
+            int uniqueCards = cardsPerSuit;
+
             // Number of copies of each unique card
-            int copiesOfCards = ignoreSuits? decks * 4 : decks;
+            int copiesOfCards = decks;
             
-            // Number of wildcards
-            int wildCards = useWildCards ? decks : 0;
-            
+            // Adjust the appropriate value depending on whether suits are ranked or not
+            if ( ignoreSuits ){
+                copiesOfCards *= 4;
+            }
+            else{
+                uniqueCards *= 4;
+            }
+
             // Total cards available
             int totalCards = uniqueCards * copiesOfCards;
+
+
+            // Calculate the possible ties
+            int ties;
             
-            // Number of catds with same face value but different suits as the wild card
-            int sameValueAsWildCard = ignoreSuits && useWildCards ? decks * 3 : 0;
+            // Wildcards only have an effect if suits are not ranked
+            if ( useWildCards && ignoreSuits ){
             
-            // Number of ties possible
-            int ties = ( uniqueCards - 1 ) * (copiesOfCards - 1) + // normal cards
+                // Number of wildcards
+                int wildCards = decks;
+            
+            
+                // Number of cards with same face value but different suits as the wild card
+                int sameValueAsWildCard = wildCards * 3;
+
+                ties = ( uniqueCards - 1 ) * (copiesOfCards - 1) + // normal cards
                     sameValueAsWildCard * ( sameValueAsWildCard - 1 ) + // same value as wildcard
                     wildCards * ( wildCards - 1 ); // wildcards
+
+            }
+            else{
+                ties = uniqueCards * (copiesOfCards - 1);
+            }
             
             // Wins/losses are half of what is left after ties are calculated
             auto winOrLoseCards = (float)( totalCards * ( totalCards  - 1 ) - ties ) / 2.0;
