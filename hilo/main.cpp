@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <random>
+#include <vector>
 #include "cxxopts.hpp"
 #include "highcard.hpp"
 #include "tests.hpp"
@@ -35,6 +36,8 @@ int main(int argc, const char * argv[] ) {
         ( "d,decks", "Number of decks to use", cxxopts::value<int>()->default_value( "1" ) )
         // Number of catds per suit
         ( "c,cards", "Number of cards per suit", cxxopts::value<int>()->default_value( "13" ) )
+        // Number of hands to play
+        ( "n,hands", "Number of hands to play", cxxopts::value<int>()->default_value( "1" ))
         // Option to ignore the ranking of suits
         ( "s,suits", "Ignore suits", cxxopts::value<bool>()->default_value("false") )
         // Option to breal ties by drawing more cards
@@ -94,26 +97,38 @@ int main(int argc, const char * argv[] ) {
     // Bind the distribution to the generator
     auto play = std::bind ( distribution, generator );
 
-#ifdef DEBUG
-    printVector( "Your chances", distribution.probabilities() );
-#endif /* DEBUG */
     
-    // Play the game
-    switch ( play() ){
-    
-        case win:
-            std::cout << "win\n";
-            break;
-        
-        case lose:
-            std::cout << "lose\n";
-            break;
-        
-        default:
-            std::cout << "tie\n";
-            break;
+    int hands = result["hands"].as<int>();
+    if ( hands > 1 ){
+        std::vector< int > counts( 3, 0 );
+        for ( int i = 0; i < hands; ++i ){
+            counts[ play() ]++;
+        }
+        auto prob = distribution.probabilities();
+        std::cout << "Wins: " << counts[ win ] << "(" << (int)floor( hands * prob[ win ] + 0.5 ) << ")\n";
+        std::cout << "Losses: " << counts[ lose ] << "(" << (int)floor( hands * prob[ lose ] + 0.5 ) << ")\n";
+        if( prob.size() > 2 ){
+            std::cout << "Ties: " << counts[ tie ] << "(" << (int)floor( hands * prob[ tie ] + 0.5 ) << ")\n";
+        }
+        std::cout << hands << " hands played\n";
     }
-
+    else{
+        // Play one hand
+        switch ( play() ){
+        
+            case win:
+                std::cout << "win\n";
+                break;
+            
+            case lose:
+                std::cout << "lose\n";
+                break;
+            
+            default:
+                std::cout << "tie\n";
+                break;
+        }
+    }
     return 0;
 }
 
